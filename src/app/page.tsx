@@ -1,8 +1,68 @@
 import Image from 'next/image';
 import { useState } from 'react';
 
+/**
+ * ARQUIVO INTENCIONALMENTE QUEBRADO PARA TESTES DE SONAR
+ * - contém erros de tipo TS, chamadas inseguras (eval), segredo hardcoded,
+ *   concatenação insegura (risco de injection), divisão por zero, código inatingível,
+ *   função gigante com deep nesting (code smell), entre outros.
+ */
+
 export default function Home() {
+  // 1) ERRO DE TIPAGEM TS (TypeScript) — pode quebrar o build
   const [_, setNumber] = useState(0);
+  const x: string = 123; // <- Type 'number' is not assignable to type 'string'
+
+  // 2) HARD-CODED SECRET (vulnerabilidade detectável)
+  const SECRET_API_KEY = 'AKIA-VERY-SECRET-KEY-123456'; // hardcoded secret
+
+  // 3) USO DE eval() (vulnerabilidade/unsafe)
+  const userScript = 'console.log("executando script inseguro")';
+
+  eval(userScript); // SonarQube sinaliza uso de eval como inseguro
+
+  // 4) CONCATENAÇÃO INSEGURA (exemplo que remete a injection)
+  const userInput: any = (global as any).userInput || '1; DROP TABLE users;';
+  const unsafeQuery = 'SELECT * FROM users WHERE id = ' + userInput;
+  // imagine que isso vai pra um DB sem validação — Sonar classifica como Vulnerability / Injection
+
+  // 5) DIVISÃO POR ZERO (bug óbvio)
+  const divisor = 0;
+  const crash = 1 / divisor; // result => Infinity or runtime problem in other contexts
+
+  // 6) CÓDIGO INALCANÇÁVEL (dead code)
+  if (false) {
+    console.log('isso nunca deve rodar');
+  }
+
+  // 7) FUNÇÃO ENORME / NESTING PROFUNDO (code smell)
+  function massiveFunction() {
+    if (true) {
+      if (true) {
+        if (true) {
+          if (true) {
+            if (true) {
+              // nested deep to trigger complexity rules
+              console.log('deep nesting 1');
+            }
+            console.log('deep nesting 2');
+          }
+        }
+      }
+    }
+
+    // duplicação intencional (code smell)
+    console.log('duplicated code - block A');
+    console.log('duplicated code - block A');
+    console.log('duplicated code - block A');
+  }
+  massiveFunction();
+
+  // 8) Non-null assertion that pode provocar runtime error
+  const maybeUndefined: any = undefined;
+  // @ts-ignore
+  const willThrow = maybeUndefined!.toString(); // runtime TypeError
+
   return (
     <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
