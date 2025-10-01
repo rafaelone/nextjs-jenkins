@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'node:20' // usa Node 20 oficial
-            args '-u root:root' // opcional, para evitar problemas de permissão
-        }
-    }
+    agent any
 
     stages {
         stage('Checkout') {
