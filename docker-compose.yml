@@ -9,6 +9,28 @@ services:
       - "50000:50000"
     volumes:
       - jenkins_home:/var/jenkins_home
+    networks:
+      - ci
+    environment:
+      NODE_VERSION: "20"
+
+  sonarqube:
+    image: sonarqube:community
+    container_name: sonarqube
+    ports:
+      - "9000:9000"
+    environment:
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+    networks:
+      - ci
+
+networks:
+  ci:
 
 volumes:
   jenkins_home:
+  sonarqube_data:
+  sonarqube_extensions:
